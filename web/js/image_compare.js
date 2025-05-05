@@ -11,13 +11,13 @@ function measureText(ctx, str) {
 }
 
 app.registerExtension({
-    name: "KDS.ImageCompare",
+    name: "ComfyUI-ImageCompare",
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
-        if (nodeData.name === "Image Compare (kds)") {
+        if (nodeData.name === "Image Compare (🐺)") {
             const onNodeCreated = nodeType.prototype.onNodeCreated;
             nodeType.prototype.onNodeCreated = function () {
                 onNodeCreated?.apply(this, arguments);
-                console.log("[KDS ImageCompare] onNodeCreated - Initializing node properties and state."); // DEBUG
+                console.log("[ComfyUI-ImageCompare] onNodeCreated - Initializing node properties and state."); // DEBUG
 
                 if (!this.properties || !("comparer_mode" in this.properties)) {
                     this.properties = { ...this.properties, "comparer_mode": "Slide" };
@@ -31,26 +31,26 @@ app.registerExtension({
                 this.compare_value = { images: [] };
                 this.compare_selected = [];
                 this.compare_hitAreas = {};
-                console.log("[KDS ImageCompare] onNodeCreated - State initialized:", this.compare_value); // DEBUG
+                console.log("[ComfyUI-ImageCompare] onNodeCreated - State initialized:", this.compare_value); // DEBUG
 
                 const onExecuted = nodeType.prototype.onExecuted;
                 nodeType.prototype.onExecuted = function (output) {
-                    console.log("[KDS ImageCompare] onExecuted - Function Entered."); // DEBUG - Moved to top
-                    console.log("[KDS ImageCompare] onExecuted - Received output from Python:", output); // DEBUG - Log raw output first
+                    console.log("[ComfyUI-ImageCompare] onExecuted - Function Entered."); // DEBUG - Moved to top
+                    console.log("[ComfyUI-ImageCompare] onExecuted - Received output from Python:", output); // DEBUG - Log raw output first
                     try {
                         onExecuted?.apply(this, arguments); // Call original
                         // Pass the raw output 'ui' data (containing a_images/b_images) to the node's setValue method
                         // Check if the received output itself has the expected keys
                         if (output && (output.a_images || output.b_images)) {
-                            console.log("[KDS ImageCompare] onExecuted - Calling setValue with received output:", output); // DEBUG
+                            console.log("[ComfyUI-ImageCompare] onExecuted - Calling setValue with received output:", output); // DEBUG
                             this.setValue(output); // Pass the output directly
                         } else {
-                            console.warn("[KDS ImageCompare] onExecuted - Received data does not contain a_images or b_images.", output); // DEBUG
+                            console.warn("[ComfyUI-ImageCompare] onExecuted - Received data does not contain a_images or b_images.", output); // DEBUG
                         }
                         // Ensure redraw after execution and potential image loading
                         this.setDirtyCanvas(true, true);
                     } catch (error) {
-                        console.error("[KDS ImageCompare] onExecuted - Error during execution:", error); // DEBUG
+                        console.error("[ComfyUI-ImageCompare] onExecuted - Error during execution:", error); // DEBUG
                     }
                 };
 
@@ -58,7 +58,7 @@ app.registerExtension({
                 nodeType.prototype.computeSize = function(out) {
                     let size = computeSize?.apply(this, arguments);
                     if (!size) size = [200, 80]; // Default size if base computeSize fails
-                    // console.log(`[KDS ImageCompare] computeSize - Base size: ${size[0]}x${size[1]}`); // DEBUG SIZE
+                    // console.log(`[ComfyUI-ImageCompare] computeSize - Base size: ${size[0]}x${size[1]}`); // DEBUG SIZE
 
                     const margin = 10;
                     let requiredHeight = LiteGraph.NODE_TITLE_HEIGHT;
@@ -81,11 +81,11 @@ app.registerExtension({
                         imageHeight = Math.max(20, imageHeight); // Min height
                      } else if (this.properties?.height) { // This might be unreliable
                          imageHeight = Math.max(20, this.properties.height - requiredHeight - margin);
-                         // console.log(`[KDS ImageCompare] computeSize - Using properties height fallback: ${imageHeight}`); // DEBUG
+                         // console.log(`[ComfyUI-ImageCompare] computeSize - Using properties height fallback: ${imageHeight}`); // DEBUG
                      } else {
                          // Fallback if no image loaded yet - Use remaining size or a default
                          imageHeight = Math.max(20, (size[1] || 80) - requiredHeight - margin);
-                         // console.log(`[KDS ImageCompare] computeSize - Using fallback height: ${imageHeight}`); // DEBUG
+                         // console.log(`[ComfyUI-ImageCompare] computeSize - Using fallback height: ${imageHeight}`); // DEBUG
                      }
 
                     requiredHeight += imageHeight + margin; // Add image height and bottom margin
@@ -93,8 +93,8 @@ app.registerExtension({
                     // Ensure minimum height is met
                     size[1] = Math.max(size[1] || 80, requiredHeight);
 
-                    // console.log(`[KDS ImageCompare] computeSize - Calculated size: ${size[0]}x${size[1]}`); // DEBUG SIZE
-                    // console.log(`[KDS ImageCompare] computeSize - Final requiredHeight: ${requiredHeight}`); // DEBUG
+                    // console.log(`[ComfyUI-ImageCompare] computeSize - Calculated size: ${size[0]}x${size[1]}`); // DEBUG SIZE
+                    // console.log(`[ComfyUI-ImageCompare] computeSize - Final requiredHeight: ${requiredHeight}`); // DEBUG
                     return size;
                 }
 
@@ -134,7 +134,7 @@ app.registerExtension({
                 const onMouseMove = nodeType.prototype.onMouseMove;
                 nodeType.prototype.onMouseMove = function(event, pos, canvas) {
                     onMouseMove?.apply(this, arguments);
-                    // console.log(`[KDS ImageCompare] onMouseMove - Pos: ${pos[0]}, ${pos[1]}`); // DEBUG
+                    // console.log(`[ComfyUI-ImageCompare] onMouseMove - Pos: ${pos[0]}, ${pos[1]}`); // DEBUG
                     this.pointerOverPos = [...pos];
                     if (this.isPointerDown && this.properties["comparer_mode"] === "Slide") {
                         this.setDirtyCanvas(true, false);
@@ -172,7 +172,7 @@ app.registerExtension({
 
                 nodeType.prototype.onDrawForeground = function(ctx) {
                     if (this.flags.collapsed) return;
-                    console.log(`[KDS ImageCompare] onDrawForeground - Node size: ${this.size[0]}x${this.size[1]}`); // DEBUG SIZE
+                    console.log(`[ComfyUI-ImageCompare] onDrawForeground - Node size: ${this.size[0]}x${this.size[1]}`); // DEBUG SIZE
 
                     this.compare_hitAreas = {};
                     const margin = 10;
@@ -284,19 +284,19 @@ app.registerExtension({
                 };
 
                 nodeType.prototype.setValue = function (v) {
-                    console.log("[KDS ImageCompare] setValue - Function Entered."); // DEBUG
+                    console.log("[ComfyUI-ImageCompare] setValue - Function Entered."); // DEBUG
                     let cleanedVal;
-                    console.log("[KDS ImageCompare] setValue - Raw input 'v':", v); // DEBUG - Simpler log
+                    console.log("[ComfyUI-ImageCompare] setValue - Raw input 'v':", v); // DEBUG - Simpler log
                     if (Array.isArray(v?.images)) { // Check if v has images array
-                        console.log("[KDS ImageCompare] setValue - Processing input as v.images array."); // DEBUG
+                        console.log("[ComfyUI-ImageCompare] setValue - Processing input as v.images array."); // DEBUG
                         cleanedVal = v.images;
                     } else if (Array.isArray(v?.a_images) || Array.isArray(v?.b_images)) { // Handle old format
-                        console.log("[KDS ImageCompare] setValue - Processing input as v.a_images/b_images."); // DEBUG
+                        console.log("[ComfyUI-ImageCompare] setValue - Processing input as v.a_images/b_images."); // DEBUG
                         const a_images = v.a_images || [];
                         const b_images = v.b_images || [];
                         cleanedVal = [];
                         const multiple = a_images.length + b_images.length > 2;
-                        console.log(`[KDS ImageCompare] setValue - Found ${a_images.length} A images, ${b_images.length} B images.`); // DEBUG
+                        console.log(`[ComfyUI-ImageCompare] setValue - Found ${a_images.length} A images, ${b_images.length} B images.`); // DEBUG
                         a_images.forEach((d, i) => cleanedVal.push({
                             url: imageDataToUrl(d),
                             name: a_images.length > 1 || multiple ? `A${i+1}` : "A",
@@ -307,19 +307,19 @@ app.registerExtension({
                             name: b_images.length > 1 || multiple ? `B${i+1}` : "B",
                             selected: false, // Default to false, select below
                         }));
-                        console.log("[KDS ImageCompare] setValue - Built cleanedVal:", cleanedVal); // DEBUG
+                        console.log("[ComfyUI-ImageCompare] setValue - Built cleanedVal:", cleanedVal); // DEBUG
                     } else {
-                        console.log("[KDS ImageCompare] setValue - Input format not recognized."); // DEBUG
+                        console.log("[ComfyUI-ImageCompare] setValue - Input format not recognized."); // DEBUG
                         cleanedVal = []; // No valid image data
                     }
 
-                    console.log("[KDS ImageCompare] setValue - Entering selection logic."); // DEBUG
+                    console.log("[ComfyUI-ImageCompare] setValue - Entering selection logic."); // DEBUG
                     // Ensure we always have exactly two selected images if possible
                     let currentSelected = cleanedVal.filter((d) => d.selected);
 
                     // If nothing selected, select first two (or one if only one exists)
                     if (currentSelected.length === 0 && cleanedVal.length > 0) {
-                        console.log("[KDS ImageCompare] setValue - Selecting first 1 or 2 images."); // DEBUG
+                        console.log("[ComfyUI-ImageCompare] setValue - Selecting first 1 or 2 images."); // DEBUG
                         cleanedVal[0].selected = true;
                         if (cleanedVal.length > 1) {
                              cleanedVal[1].selected = true;
@@ -327,7 +327,7 @@ app.registerExtension({
                     }
                     // If only one selected, select the next available one
                     else if (currentSelected.length === 1 && cleanedVal.length > 1) {
-                        console.log("[KDS ImageCompare] setValue - Only 1 selected, selecting next available."); // DEBUG
+                        console.log("[ComfyUI-ImageCompare] setValue - Only 1 selected, selecting next available."); // DEBUG
                          const firstUnselected = cleanedVal.find(d => !d.selected);
                          if (firstUnselected) {
                              firstUnselected.selected = true;
@@ -335,7 +335,7 @@ app.registerExtension({
                     }
                      // If more than two selected, deselect extras (keep first two found)
                     else if (currentSelected.length > 2) {
-                        console.log("[KDS ImageCompare] setValue - More than 2 selected, deselecting extras."); // DEBUG
+                        console.log("[ComfyUI-ImageCompare] setValue - More than 2 selected, deselecting extras."); // DEBUG
                         let count = 0;
                         cleanedVal.forEach(d => {
                             if (d.selected) {
@@ -347,36 +347,36 @@ app.registerExtension({
                         });
                     }
 
-                    console.log("[KDS ImageCompare] setValue - Exiting selection logic."); // DEBUG
+                    console.log("[ComfyUI-ImageCompare] setValue - Exiting selection logic."); // DEBUG
                     this.compare_value.images = cleanedVal;
                     this.compare_selected = this.compare_value.images.filter((d) => d.selected);
 
-                    console.log("[KDS ImageCompare] setValue - Final this.compare_value.images:", this.compare_value.images); // DEBUG
-                    console.log("[KDS ImageCompare] setValue - Final this.compare_selected:", this.compare_selected); // DEBUG
+                    console.log("[ComfyUI-ImageCompare] setValue - Final this.compare_value.images:", this.compare_value.images); // DEBUG
+                    console.log("[ComfyUI-ImageCompare] setValue - Final this.compare_selected:", this.compare_selected); // DEBUG
                     // Load image objects for selected items
                     this.loadSelectedImages();
                 };
 
                 nodeType.prototype.loadSelectedImages = function() {
-                    console.log(`[KDS ImageCompare] loadSelectedImages - Attempting to load ${this.compare_selected.length} images.`); // DEBUG
+                    console.log(`[ComfyUI-ImageCompare] loadSelectedImages - Attempting to load ${this.compare_selected.length} images.`); // DEBUG
                     this.compare_selected.forEach(sel => {
                         if (!sel.img && sel.url) {
-                            console.log(`[KDS ImageCompare] loadSelectedImages - Creating Image() for URL: ${sel.url}`); // DEBUG
+                            console.log(`[ComfyUI-ImageCompare] loadSelectedImages - Creating Image() for URL: ${sel.url}`); // DEBUG
                             sel.img = new Image();
                             sel.img.src = sel.url;
                             sel.img.onload = () => { 
-                                console.log(`[KDS ImageCompare] loadSelectedImages - Image loaded: ${sel.url}`); // DEBUG
+                                console.log(`[ComfyUI-ImageCompare] loadSelectedImages - Image loaded: ${sel.url}`); // DEBUG
                                 this.setDirtyCanvas(true, false); 
                             }; // Redraw when loaded
                             sel.img.onerror = (err) => { 
-                                console.error(`[KDS ImageCompare] loadSelectedImages - Error loading image: ${sel.url}`, err); // DEBUG
+                                console.error(`[ComfyUI-ImageCompare] loadSelectedImages - Error loading image: ${sel.url}`, err); // DEBUG
                             }; 
                         }
                     });
                 };
 
                 nodeType.prototype.handleSelectionClick = function(index) {
-                    console.log(`[KDS ImageCompare] handleSelectionClick - Clicked index: ${index}`); // DEBUG
+                    console.log(`[ComfyUI-ImageCompare] handleSelectionClick - Clicked index: ${index}`); // DEBUG
                     const clickedImageData = this.compare_value.images[index];
                     if (!clickedImageData) return;
 
@@ -406,7 +406,7 @@ app.registerExtension({
                     this.compare_selected = this.compare_value.images.filter((d) => d.selected);
                     this.loadSelectedImages();
                     this.setDirtyCanvas(true, false);
-                    console.log(`[KDS ImageCompare] handleSelectionClick - New selected:`, JSON.parse(JSON.stringify(this.compare_selected))); // DEBUG
+                    console.log(`[ComfyUI-ImageCompare] handleSelectionClick - New selected:`, JSON.parse(JSON.stringify(this.compare_selected))); // DEBUG
                 };
 
                 nodeType.prototype.getHelp = function() {
@@ -443,10 +443,10 @@ app.registerExtension({
     },
 
     nodeCreated(node, app) {
-        if (node.type === "Image Compare (kds)") {
-           // console.log("KDS Image Compare node created:", node);
+        if (node.type === "ComfyUI-ImageCompare") {
+           // console.log("ComfyUI-ImageCompare node created:", node);
         }
     }
 });
 
-console.log("%cKDS Image Compare: Registered", "color: cyan");
+console.log("%cComfyUI-ImageCompare: Registered", "color: cyan");
