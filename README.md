@@ -4,6 +4,10 @@ A simple custom node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI) th
 
 This node is useful for visually inspecting differences or similarities between images generated at different steps of a workflow, or comparing outputs from different models or prompts.
 
+## Acknowledgements
+
+Much of the foundational code for handling image saving and previews was adapted from the excellent [rgthree-comfy](https://github.com/rgthree/rgthree-comfy) custom nodes by rgthree. Their work provided a great starting point for the UI display logic.
+
 ## Features
 
 * Displays two input images (A and B) next to each other.

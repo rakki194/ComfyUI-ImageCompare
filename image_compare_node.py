@@ -98,7 +98,7 @@ class ComfyUIImageCompare:
         prompt=None,
         extra_pnginfo=None,
     ):
-        print("[ComfyUI-ImageCompare Node] Entering compare_images")  # DEBUG
+        print("[ComfyUI-ImageCompare] Entering compare_images")  # DEBUG
         # Use the node's filename prefix logic
         filename_prefix = "ComfyUI-ImageCompare.compare."
 
@@ -106,42 +106,42 @@ class ComfyUIImageCompare:
         try:
             if image_a is not None and len(image_a) > 0:
                 print(
-                    f"[ComfyUI-ImageCompare Node] Processing image_a (shape: {image_a.shape})"
+                    f"[ComfyUI-ImageCompare] Processing image_a (shape: {image_a.shape})"
                 )  # DEBUG
                 # Call the copied save_images method
                 saved_a = self.save_images(
                     image_a, filename_prefix, prompt, extra_pnginfo
                 )
                 print(
-                    f"[ComfyUI-ImageCompare Node] Result from save_images (A): {saved_a}"
+                    f"[ComfyUI-ImageCompare] Result from save_images (A): {saved_a}"
                 )  # DEBUG
                 if saved_a and "ui" in saved_a and "images" in saved_a["ui"]:
                     result["ui"]["a_images"] = saved_a["ui"]["images"]
                 else:
                     print(
-                        "[ComfyUI-ImageCompare Node] WARNING: Unexpected format from save_images (A)"
+                        "[ComfyUI-ImageCompare] WARNING: Unexpected format from save_images (A)"
                     )  # DEBUG
 
             if image_b is not None and len(image_b) > 0:
                 print(
-                    f"[ComfyUI-ImageCompare Node] Processing image_b (shape: {image_b.shape})"
+                    f"[ComfyUI-ImageCompare] Processing image_b (shape: {image_b.shape})"
                 )  # DEBUG
                 # Call the copied save_images method
                 saved_b = self.save_images(
                     image_b, filename_prefix, prompt, extra_pnginfo
                 )
                 print(
-                    f"[ComfyUI-ImageCompare Node] Result from save_images (B): {saved_b}"
+                    f"[ComfyUI-ImageCompare] Result from save_images (B): {saved_b}"
                 )  # DEBUG
                 if saved_b and "ui" in saved_b and "images" in saved_b["ui"]:
                     result["ui"]["b_images"] = saved_b["ui"]["images"]
                 else:
                     print(
-                        "[ComfyUI-ImageCompare Node] WARNING: Unexpected format from save_images (B)"
+                        "[ComfyUI-ImageCompare] WARNING: Unexpected format from save_images (B)"
                     )  # DEBUG
         except Exception as e:
             print(
-                f"[ComfyUI-ImageCompare Node] ERROR during compare_images: {e}",
+                f"[ComfyUI-ImageCompare] ERROR during compare_images: {e}",
                 file=sys.stderr,
             )  # DEBUG
             import traceback
@@ -152,5 +152,5 @@ class ComfyUIImageCompare:
 
         # Ensure the output format matches what the JS expects
         # The JS now expects { ui: { a_images: [...], b_images: [...] } }
-        print(f"[ComfyUI-ImageCompare Node] Returning result: {result}")  # DEBUG
+        print(f"[ComfyUI-ImageCompare] Returning result: {result}")  # DEBUG
         return result
