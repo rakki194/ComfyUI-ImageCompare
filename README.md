@@ -28,7 +28,6 @@ Much of the foundational code for handling image saving and previews was adapted
     git clone https://github.com/rakki194/ComfyUI-ImageCompare.git
     ```
 
-    *(Replace `rakki194` with the actual repository URL if available)*
 3. Restart ComfyUI.
 
 Alternatively, you can download the `.py` files (and any `web` directory files if applicable) and place them inside a folder named `ComfyUI-ImageCompare` within your `custom_nodes` directory.
