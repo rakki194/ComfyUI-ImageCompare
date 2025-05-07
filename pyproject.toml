@@ -1,0 +1,14 @@
+[project]
+name = "imagecompare"
+description = "A simple custom node for ComfyUI that allows you to compare two images (or batches of images) side-by-side within the UI."
+version = "1.0.0"
+license = {file = "LICENSE"}
+
+[project.urls]
+Repository = "https://github.com/rakki194/ComfyUI-ImageCompare"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI-ImageCompare"
+Icon = ""
